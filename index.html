@@ -739,7 +739,8 @@ function hint(){const c=S.T.c[S.lvl];$('#out').innerHTML=SB().sql||SB().xl?`<pre
 async function db(){if(DB)return DB;
  await new Promise((r,j)=>{const e=document.createElement('script');e.src='https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js';e.onload=r;e.onerror=j;document.head.appendChild(e)});
  const Q=await initSqlJs({locateFile:f=>'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/'+f});DB=new Q.Database();DB.run(SEED);return DB}
-function sqlNormalize(q){return q.trim().replace(/;\s*(?=(FROM|WHERE|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT)\b)/gi,' ').replace(/;\s*$/,';')}\nfunction run(d,q){q=sqlNormalize(q);if(!/^\s*select/i.test(q))throw Error('Hier sind nur SELECT-Abfragen erlaubt.');return d.exec(q)[0]||{columns:[],values:[]}}
+function sqlNormalize(q){return q.trim().replace(/;\s*(?=(FROM|WHERE|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT)\b)/gi,' ').replace(/;\s*$/,';')}
+function run(d,q){q=sqlNormalize(q);if(!/^\s*select/i.test(q))throw Error('Hier sind nur SELECT-Abfragen erlaubt.');return d.exec(q)[0]||{columns:[],values:[]}}
 const tbl=r=>`<table><tr>${r.columns.map(c=>`<th>${c}</th>`).join('')}</tr>${r.values.map(v=>`<tr>${v.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table>`;
 async function runq(){const o=$('#out');o.textContent='Lade …';try{o.innerHTML=tbl(run(await db(),$('#ed').value))}catch(e){o.innerHTML=`<p class=warn>${e.message}</p>`}}
 const num=s=>{s=s.trim().replace(/,/g,'.').replace(/−/g,'-').replace(/·/g,'*').replace(/\^/g,'**');if(!s||!/^[\d\s.+\-*\/()]*$/.test(s))return NaN;try{return Function('return '+s)()}catch(e){return NaN}};
